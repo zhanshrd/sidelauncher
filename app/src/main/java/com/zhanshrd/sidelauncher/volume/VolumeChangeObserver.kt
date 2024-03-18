@@ -23,8 +23,8 @@ class VolumeChangeObserver(context: Context, private val handler: Handler) : Con
         //该特殊场景下，闹钟音量可以作为归零前的媒体音量的快照，用于强制恢复媒体音量
         if(a.equals("content://settings/system/volume_alarm_speaker")){
             var currentVolume = audioManager.getStreamVolume(AudioManager.STREAM_ALARM)
-            if(currentVolume>1){
-                audioManager.setStreamVolume(AudioManager.STREAM_MUSIC, currentVolume-1, 0)
+            if(currentVolume>0){
+                audioManager.setStreamVolume(AudioManager.STREAM_MUSIC, currentVolume, 0)
             }
         }
     }

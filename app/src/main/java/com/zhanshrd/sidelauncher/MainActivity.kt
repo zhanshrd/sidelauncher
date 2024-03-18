@@ -5,12 +5,11 @@ import VolumeChangeObserver
 import android.content.Context
 import android.content.Intent
 import android.content.pm.ApplicationInfo
-import android.media.AudioManager
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.provider.Settings
-import android.view.KeyEvent
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.google.android.flexbox.FlexDirection
 import com.google.android.flexbox.FlexWrap
@@ -55,46 +54,29 @@ class MainActivity : AppCompatActivity() {
         // 创建并注册闹钟音量变化观察者
         volumeChangeObserver = VolumeChangeObserver(this, Handler(Looper.getMainLooper()));
         getContentResolver().registerContentObserver(Settings.System.CONTENT_URI, true, volumeChangeObserver);
-    }
 
-    //监听按钮触发事件
-    override fun dispatchKeyEvent(event: KeyEvent?): Boolean {
-        // 检查按键事件类型（按下或抬起)
-        if (event?.action == KeyEvent.ACTION_UP){
-            //Toast.makeText(this@MainActivity, "按下按钮", Toast.LENGTH_LONG).show()
-            val audioManager: AudioManager = this.getSystemService(Context.AUDIO_SERVICE) as AudioManager
-            // 检查按键事件按键码
-            if (event.keyCode == 131) {//音量加
-                var alarmVolume = audioManager.getStreamVolume(AudioManager.STREAM_ALARM)
-                if(alarmVolume>1){
-                    audioManager.adjustSuggestedStreamVolume(
-                        AudioManager.STREAM_MUSIC, // 要调整的音频流类型
-                        AudioManager.ADJUST_RAISE, // 调整方向：增加音量
-                        0 // 可选的标志位，通常设置为0
-                    )
-                    //return true // 如果事件已经被处理，返回 true
-                }
-            }
-            else if (event.keyCode == 132) {//音量减
-                var alarmVolume = audioManager.getStreamVolume(AudioManager.STREAM_ALARM)
-                if(alarmVolume>1){
-                    audioManager.adjustSuggestedStreamVolume(
-                        AudioManager.STREAM_MUSIC, // 要调整的音频流类型
-                        AudioManager.ADJUST_LOWER, // 调整方向：增加音量
-                        0 // 可选的标志位，通常设置为0
-                    )
-                    //return true // 如果事件已经被处理，返回 true
-                }
-            }
+        //创建音量按键后台监听
+        if (!AccessibleHelper.isAccessibilityEnable(this)) {
+            Toast.makeText(this, "需要开启无障碍服务1", Toast.LENGTH_LONG).show()
+            startActivity(Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS))
         }
-        // 如果不处理该事件或需要继续传递事件，调用 super 方法
-        return super.dispatchKeyEvent(event)
+
+        val intent = Intent(this, MyAccessibilityService::class.java)
+        startService(intent)
     }
 
     override fun onDestroy() {
         super.onDestroy()
         // 在 Activity 销毁时取消注册闹钟音量观察者
         volumeChangeObserver.unregister()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        if (!AccessibleHelper.isAccessibilityEnable(this)) {
+            Toast.makeText(this, "需要开启无障碍服务2", Toast.LENGTH_LONG).show()
+            startActivity(Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS))
+        }
     }
 }
 
