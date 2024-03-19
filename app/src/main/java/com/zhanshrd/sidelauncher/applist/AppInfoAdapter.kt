@@ -46,9 +46,9 @@ class AppInfoAdapter(private val context: Context) : RecyclerView.Adapter<AppInf
         // 从 SharedPreferences 恢复变量值
         val sharedPreferences = context.getSharedPreferences("settings", AppCompatActivity.MODE_PRIVATE)
         var var1Value = sharedPreferences.getInt("var1Value", 50) // 如果找不到键，返回默认值 50
-        var var2Value = sharedPreferences.getInt("var2Value", 10) // 如果找不到键，返回默认值 10
-        var var3Value = sharedPreferences.getInt("var3Value", 20) // 如果找不到键，返回默认值 20
-        var var4Value = sharedPreferences.getInt("var4Value", 30) // 如果找不到键，返回默认值 20
+        var var2Value = sharedPreferences.getInt("var2Value", 9) // 如果找不到键，返回默认值 9
+        var var3Value = sharedPreferences.getInt("var3Value", 45) // 如果找不到键，返回默认值 45
+        var var4Value = sharedPreferences.getInt("var4Value", 20) // 如果找不到键，返回默认值 20
 
         val sidebarWidth = var1Value;//侧边导航栏宽度
         val rowCount = var2Value;//每行图标个数
