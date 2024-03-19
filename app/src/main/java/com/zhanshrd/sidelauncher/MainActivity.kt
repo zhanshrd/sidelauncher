@@ -49,6 +49,7 @@ class MainActivity : AppCompatActivity() {
         var var1Value = sharedPreferences.getInt("var1Value", 50) // 如果找不到键，返回默认值 50
         var var2Value = sharedPreferences.getInt("var2Value", 10) // 如果找不到键，返回默认值 10
         var var3Value = sharedPreferences.getInt("var3Value", 20) // 如果找不到键，返回默认值 20
+        var var4Value = sharedPreferences.getInt("var4Value", 30) // 如果找不到键，返回默认值 20
 
         //背景图片
         //TODO
@@ -91,6 +92,7 @@ class MainActivity : AppCompatActivity() {
 
 
         binding.mainLayout.setPadding(dpToPx(sidebarWidth+16,this),dpToPx(5,this), dpToPx(16,this), dpToPx(16,this))
+        binding.buttonSettings.setTextSize((var4Value*10/var2Value).toFloat())
 
         val recyclerView = binding.recyclerView
         // 创建FlexboxLayoutManager实例

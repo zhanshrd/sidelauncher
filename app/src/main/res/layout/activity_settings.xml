@@ -5,13 +5,13 @@
     android:orientation="vertical"
     android:padding="16dp">
 
-    <!-- 第一个变量的设置 -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="8"
         android:orientation="horizontal">
 
+        <!-- 第一个变量的设置 -->
         <LinearLayout
             android:layout_width="0dp"
             android:layout_height="match_parent"
@@ -107,6 +107,40 @@
                 android:text="+" />
 
         </LinearLayout>
+
+        <!-- 第一个变量的设置 -->
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center|top"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="字体大小:" />
+
+            <TextView
+                android:id="@+id/var4Value"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="50" />
+
+            <Button
+                android:id="@+id/var4Decrement"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="-" />
+
+            <Button
+                android:id="@+id/var4Increment"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="+" />
+
+        </LinearLayout>
+
     </LinearLayout>
 
     <Button

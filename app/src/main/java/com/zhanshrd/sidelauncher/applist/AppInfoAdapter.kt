@@ -48,6 +48,7 @@ class AppInfoAdapter(private val context: Context) : RecyclerView.Adapter<AppInf
         var var1Value = sharedPreferences.getInt("var1Value", 50) // 如果找不到键，返回默认值 50
         var var2Value = sharedPreferences.getInt("var2Value", 10) // 如果找不到键，返回默认值 10
         var var3Value = sharedPreferences.getInt("var3Value", 20) // 如果找不到键，返回默认值 20
+        var var4Value = sharedPreferences.getInt("var4Value", 30) // 如果找不到键，返回默认值 20
 
         val sidebarWidth = var1Value;//侧边导航栏宽度
         val rowCount = var2Value;//每行图标个数
@@ -62,7 +63,7 @@ class AppInfoAdapter(private val context: Context) : RecyclerView.Adapter<AppInf
         val view = holder.itemView
         val lp = view.layoutParams as FlexboxLayoutManager.LayoutParams
         lp.width = screenWidth/(rowCount+1)
-        lp.height = (lp.width*rowCount/5)
+        lp.height = (lp.width*7/5)
         lp.setMargins(lp.width/rowCount/2,lp.width/rowCount/2,lp.width/rowCount/2,lp.width/rowCount/2+rowspace)
         view.setLayoutParams(lp)
 
@@ -72,7 +73,7 @@ class AppInfoAdapter(private val context: Context) : RecyclerView.Adapter<AppInf
         imageView.setLayoutParams(params)
 
         val textView: TextView = holder.itemView.findViewById(R.id.appName);
-        textView.setTextSize((120/rowCount).toFloat())
+        textView.setTextSize((var4Value*10/rowCount).toFloat())
 
     }
 

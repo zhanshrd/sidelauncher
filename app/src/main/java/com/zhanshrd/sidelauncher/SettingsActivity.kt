@@ -21,6 +21,10 @@ class SettingsActivity : AppCompatActivity() {
     private lateinit var var3DecrementButton: Button
     private lateinit var var3IncrementButton: Button
     private var var3Value = 0
+    private lateinit var var4ValueTextView: TextView
+    private lateinit var var4DecrementButton: Button
+    private lateinit var var4IncrementButton: Button
+    private var var4Value = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -30,6 +34,7 @@ class SettingsActivity : AppCompatActivity() {
         var var1Value = sharedPreferences.getInt("var1Value", 50)
         var var2Value = sharedPreferences.getInt("var2Value", 10)
         var var3Value = sharedPreferences.getInt("var3Value", 20)
+        var var4Value = sharedPreferences.getInt("var4Value", 30)
 
         // 初始化界面元素
         var1ValueTextView = findViewById(R.id.var1Value)
@@ -46,6 +51,11 @@ class SettingsActivity : AppCompatActivity() {
         var3DecrementButton = findViewById(R.id.var3Decrement)
         var3IncrementButton = findViewById(R.id.var3Increment)
         var3ValueTextView.text = var3Value.toString() // 显示初始值
+
+        var4ValueTextView = findViewById(R.id.var4Value)
+        var4DecrementButton = findViewById(R.id.var4Decrement)
+        var4IncrementButton = findViewById(R.id.var4Increment)
+        var4ValueTextView.text = var4Value.toString() // 显示初始值
 
         // 设置加减按钮的点击事件监听器
         var1DecrementButton.setOnClickListener {
@@ -75,6 +85,15 @@ class SettingsActivity : AppCompatActivity() {
             var3ValueTextView.text = var3Value.toString()
         }
 
+        var4DecrementButton.setOnClickListener {
+            var4Value--
+            var4ValueTextView.text = var4Value.toString()
+        }
+        var4IncrementButton.setOnClickListener {
+            var4Value++
+            var4ValueTextView.text = var4Value.toString()
+        }
+
         // 设置保存按钮的点击事件监听器
         findViewById<Button>(R.id.saveButton).setOnClickListener {
             // 获取 SharedPreferences 实例
@@ -85,6 +104,7 @@ class SettingsActivity : AppCompatActivity() {
             editor.putInt("var1Value", var1Value)
             editor.putInt("var2Value", var2Value)
             editor.putInt("var3Value", var3Value)
+            editor.putInt("var4Value", var4Value)
             // ... 保存其他变量值 ...
             // 提交修改
             editor.apply()
