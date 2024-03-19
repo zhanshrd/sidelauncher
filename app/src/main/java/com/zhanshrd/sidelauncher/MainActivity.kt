@@ -2,31 +2,95 @@ package com.zhanshrd.sidelauncher
 
 import AppInfoAdapter
 import VolumeChangeObserver
+import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.content.pm.ApplicationInfo
+import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.provider.Settings
+import android.util.DisplayMetrics
+import android.view.View
+import android.view.WindowManager
 import android.widget.Toast
+import androidx.activity.result.ActivityResult
+import androidx.activity.result.ActivityResultCallback
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
+import com.google.android.flexbox.AlignItems
 import com.google.android.flexbox.FlexDirection
 import com.google.android.flexbox.FlexWrap
-import com.zhanshrd.sidelauncher.databinding.ActivityMainBinding
-
 import com.google.android.flexbox.FlexboxLayoutManager
+import com.zhanshrd.sidelauncher.databinding.ActivityMainBinding
 
 
 class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
     private lateinit var adapter: AppInfoAdapter
     private lateinit var volumeChangeObserver: VolumeChangeObserver
+    private val REQUEST_SETTINGS = 1 // 定义一个唯一的请求码
+    // 创建 ActivityResultLauncher 对象
+    val startActivity= registerForActivityResult(ActivityResultContracts.StartActivityForResult()){
+        //首先判断resultCode
+        if (it.resultCode == RESULT_OK){
+            this.recreate()
+        }else{}
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+
+
+        // 从 SharedPreferences 恢复变量值
+        val sharedPreferences = getSharedPreferences("settings", MODE_PRIVATE)
+        var var1Value = sharedPreferences.getInt("var1Value", 50) // 如果找不到键，返回默认值 50
+        var var2Value = sharedPreferences.getInt("var2Value", 10) // 如果找不到键，返回默认值 10
+        var var3Value = sharedPreferences.getInt("var3Value", 20) // 如果找不到键，返回默认值 20
+
+        //背景图片
+        //TODO
+        val backgroundImagePath = ""
+        val sidebarWidth = var1Value;//侧边导航栏宽度
+
+        if(backgroundImagePath.equals("")){
+            val drawable: Drawable? = resources.getDrawable(R.drawable.bak, null)
+            drawable?.let {
+                window.setBackgroundDrawable(it)
+            }
+        }
+
+        // 获取 Window 对象
+        val window = this.window
+
+        // 清除所有之前的标志
+        window.clearFlags(
+            WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS
+                or WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION)
+
+        // 添加新的标志，允许内容扩展到导航栏
+        window.addFlags(WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN
+                or WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS
+                or WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
+
+        // 设置内容视图的行为，以便它不会被系统栏覆盖
+        val decorView = window.decorView
+        decorView.systemUiVisibility = (View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+                or View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+                or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+                // 如果需要隐藏导航栏和状态栏，可以添加以下标志
+                // or View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+                // or View.SYSTEM_UI_FLAG_FULLSCREEN
+                )
+
+
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+
+        binding.mainLayout.setPadding(dpToPx(sidebarWidth+16,this),dpToPx(5,this), dpToPx(16,this), dpToPx(16,this))
 
         val recyclerView = binding.recyclerView
         // 创建FlexboxLayoutManager实例
@@ -35,11 +99,13 @@ class MainActivity : AppCompatActivity() {
         flexboxLayoutManager.flexDirection = FlexDirection.ROW
         // 设置FlexWrap为WRAP，即自动换行
         flexboxLayoutManager.flexWrap = FlexWrap.WRAP
+        //定义项目在副轴轴上如何对齐
+        flexboxLayoutManager.alignItems = AlignItems.CENTER;
 
         // 将FlexboxLayoutManager设置为RecyclerView的布局管理器
         recyclerView.layoutManager = flexboxLayoutManager
 
-        adapter = AppInfoAdapter()
+        adapter = AppInfoAdapter(this)
         recyclerView.adapter = adapter
 
         val packages = getAppsWithLauncherIcons(this)
@@ -57,12 +123,32 @@ class MainActivity : AppCompatActivity() {
 
         //创建音量按键后台监听
         if (!AccessibleHelper.isAccessibilityEnable(this)) {
-            Toast.makeText(this, "需要开启无障碍服务1", Toast.LENGTH_LONG).show()
+            Toast.makeText(this, "需要开启无障碍服务", Toast.LENGTH_LONG).show()
             startActivity(Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS))
         }
 
         val intent = Intent(this, MyAccessibilityService::class.java)
         startService(intent)
+
+        //绑定设置按钮动作
+        bindButtons()
+    }
+
+    private fun bindButtons() {
+        binding.buttonSettings.setOnClickListener {
+            openSettingPage()
+        }
+
+    }
+
+    fun dpToPx(dp: Int, context: Context): Int {
+        return Math.round(dp * (context.resources.displayMetrics.xdpi / DisplayMetrics.DENSITY_DEFAULT))
+    }
+
+    private fun openSettingPage() {
+
+        val intent = Intent(this, SettingsActivity::class.java)
+        startActivity.launch(intent);
     }
 
     override fun onDestroy() {
@@ -74,7 +160,7 @@ class MainActivity : AppCompatActivity() {
     override fun onResume() {
         super.onResume()
         if (!AccessibleHelper.isAccessibilityEnable(this)) {
-            Toast.makeText(this, "需要开启无障碍服务2", Toast.LENGTH_LONG).show()
+            Toast.makeText(this, "需要开启无障碍服务", Toast.LENGTH_LONG).show()
             startActivity(Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS))
         }
     }
