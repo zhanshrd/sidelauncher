@@ -17,7 +17,7 @@ import com.zhanshrd.sidelauncher.databinding.ItemAppInfoBinding
 
 class AppInfoAdapter(private val context: Context) : RecyclerView.Adapter<AppInfoAdapter.ViewHolder>() {
 
-    private var appInfoList = emptyList<Triple<String, Drawable, String>>()
+    private var appInfoList = emptyList<Triple<String, Drawable?, String>>()
 
     //获取屏幕宽度
     // 获取 WindowManager 的实例
@@ -26,7 +26,7 @@ class AppInfoAdapter(private val context: Context) : RecyclerView.Adapter<AppInf
     // 创建一个 DisplayMetrics 对象来保存屏幕的信息
     val displayMetrics = DisplayMetrics()
 
-    fun setAppInfoList(list: List<Triple<String, Drawable, String>>) {
+    fun setAppInfoList(list: List<Triple<String, Drawable?, String>>) {
         appInfoList = list
         notifyDataSetChanged()
     }
@@ -84,7 +84,7 @@ class AppInfoAdapter(private val context: Context) : RecyclerView.Adapter<AppInf
 
     class ViewHolder(private val binding: ItemAppInfoBinding) :
         RecyclerView.ViewHolder(binding.root) {
-        fun bind(appName: String, appIcon: Drawable, packageName: String) {
+        fun bind(appName: String, appIcon: Drawable?, packageName: String) {
             binding.appName.text = appName
             binding.appIcon.setImageDrawable(appIcon)
 

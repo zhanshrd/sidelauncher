@@ -2,7 +2,6 @@ package com.zhanshrd.sidelauncher
 
 import AppInfoAdapter
 import VolumeChangeObserver
-import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.content.pm.ApplicationInfo
@@ -12,11 +11,10 @@ import android.os.Handler
 import android.os.Looper
 import android.provider.Settings
 import android.util.DisplayMetrics
+import android.util.LruCache
 import android.view.View
 import android.view.WindowManager
 import android.widget.Toast
-import androidx.activity.result.ActivityResult
-import androidx.activity.result.ActivityResultCallback
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import com.google.android.flexbox.AlignItems
@@ -35,7 +33,15 @@ class MainActivity : AppCompatActivity() {
     val startActivity= registerForActivityResult(ActivityResultContracts.StartActivityForResult()){
         //首先判断resultCode
         if (it.resultCode == RESULT_OK){
-            this.recreate()
+            val sharedPreferences = getSharedPreferences("settings", MODE_PRIVATE)
+            var var1Value = sharedPreferences.getInt("var1Value", 50) // 如果找不到键，返回默认值 50
+            var var2Value = sharedPreferences.getInt("var2Value", 9) // 如果找不到键，返回默认值 19
+            var var3Value = sharedPreferences.getInt("var3Value", 45) // 如果找不到键，返回默认值 45
+            var var4Value = sharedPreferences.getInt("var4Value", 20) // 如果找不到键，返回默认值 20
+            val sidebarWidth = var1Value;//侧边导航栏宽度
+            binding.mainLayout.setPadding(dpToPx(sidebarWidth+16,this),dpToPx(5,this), dpToPx(16,this), dpToPx(16,this))
+            binding.buttonSettings.setTextSize((var4Value*10/var2Value).toFloat())
+            adapter.notifyDataSetChanged()
         }else{}
     }
 
@@ -113,7 +119,19 @@ class MainActivity : AppCompatActivity() {
         val packages = getAppsWithLauncherIcons(this)
         val appInfoList = packages.map { packageInfo ->
             val appName = packageInfo.loadLabel(packageManager).toString()
-            val appIcon = packageInfo.loadIcon(packageManager)
+
+            //var appIcon = packageInfo.loadIcon(packageManager)
+            var appIcon = getCachedIcon(packageInfo.packageName)
+            if (appIcon != null) {
+                // 缓存命中，直接使用缓存中的图标
+            } else {
+                // 缓存未命中，需要加载图标
+                appIcon = packageInfo.loadIcon(packageManager) // 从系统加载图标
+                if (appIcon != null) {
+                    // 将新图标添加到缓存中
+                    putCachedIcon(packageInfo.packageName, appIcon)
+                }
+            }
             val packageName = packageInfo.packageName
             Triple(appName, appIcon, packageName)
         }
@@ -190,4 +208,14 @@ fun getAppsWithLauncherIcons(context: Context): List<ApplicationInfo> {
         }
     }
     return appsWithLauncherIcons.toList()
+}
+
+val iconCache = LruCache<String, Drawable>(99)
+
+fun getCachedIcon(packageName: String): Drawable? {
+    return iconCache.get(packageName)
+}
+
+fun putCachedIcon(packageName: String, icon: Drawable) {
+    iconCache.put(packageName, icon)
 }
