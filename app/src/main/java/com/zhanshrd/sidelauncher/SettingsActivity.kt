@@ -32,9 +32,9 @@ class SettingsActivity : AppCompatActivity() {
 
         val sharedPreferences = getSharedPreferences("settings", MODE_PRIVATE)
         var var1Value = sharedPreferences.getInt("var1Value", 50)
-        var var2Value = sharedPreferences.getInt("var2Value", 10)
-        var var3Value = sharedPreferences.getInt("var3Value", 20)
-        var var4Value = sharedPreferences.getInt("var4Value", 30)
+        var var2Value = sharedPreferences.getInt("var2Value", 9)
+        var var3Value = sharedPreferences.getInt("var3Value", 45)
+        var var4Value = sharedPreferences.getInt("var4Value", 20)
 
         // 初始化界面元素
         var1ValueTextView = findViewById(R.id.var1Value)
